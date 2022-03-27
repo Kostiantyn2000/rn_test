@@ -2,16 +2,35 @@ import React from 'react';
 import {StyleSheet, Text, TextInput, View, Button} from 'react-native';
 import {signInWithEmailAndPassword} from 'firebase/auth';
 import {auth} from '../../repositories/firebase_repository';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import HomeTabs from '../home/home_tabs';
 export default class SingIn extends React.Component {
   state = {email: '', password: '', errorMessage: null};
   handleLogin = () => {
     const {email, password} = this.state;
     signInWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        this.props.navigation.navigate('Home');
-      })
+      .then(userCredential => this.getData(userCredential))
       .catch(error => this.setState({errorMessage: error.message}));
   };
+
+  getData = async value => {
+    const jsonValue = value._tokenResponse.email;
+    try {
+      await AsyncStorage.getItem('UserName').then(value => {
+        if (value != null || jsonValue) {
+          this.props.navigation.navigate('HomeTab');
+        }
+      });
+    } catch (e) {
+      console.log(e);
+      // error reading value
+    }
+  };
+
+  componentDidMount() {
+    this.getData();
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -40,7 +59,7 @@ export default class SingIn extends React.Component {
         <View style={styles.btnSignUpContainer}>
           <Button
             title="Don't have an account? Sign Up"
-            onPress={() => this.props.navigation.navigate('SingUp')}
+            onPress={() => this.props.navigation.navigate('Home')}
           />
         </View>
       </View>

@@ -2,22 +2,38 @@ import React from 'react';
 import {StyleSheet, Text, TextInput, View, Button} from 'react-native';
 import {createUserWithEmailAndPassword} from 'firebase/auth';
 import {auth} from '../../repositories/firebase_repository';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export default class SignUp extends React.Component {
   state = {email: '', password: '', errorMessage: null};
+
   handleSignUp = () => {
     const {email, password} = this.state;
     createUserWithEmailAndPassword(auth, email, password)
-      .then(() => this.props.navigation.navigate('HomeTab'))
+      .then(userCredential => this.storeData(userCredential))
       .catch(error => this.setState({errorMessage: error.message}));
   };
+  storeData = async value => {
+    let jsonValue = value._tokenResponse.email;
+
+    if (jsonValue.length === 0) {
+      console.log('User No Register');
+    } else {
+      try {
+        await AsyncStorage.setItem('UserName', jsonValue);
+        this.props.navigation.navigate('HomeTab');
+      } catch (e) {
+        console.error();
+      }
+    }
+  };
+
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.text}>Sign Up</Text>
-        {/* {this.state.errorMessage && (
-          <Text style={{color: 'red'}}>{this.state.errorMessage}</Text>
-        )} */}
+        {this.state.errorMessage && (
+          <Text style={styles.textError}>{this.state.errorMessage}</Text>
+        )}
         <TextInput
           placeholder="Email"
           autoCapitalize="none"
@@ -69,5 +85,8 @@ const styles = StyleSheet.create({
   },
   btnLoginContainer: {
     marginTop: 15,
+  },
+  textError: {
+    color: 'red',
   },
 });
