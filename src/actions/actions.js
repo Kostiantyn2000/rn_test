@@ -1,3 +1,4 @@
+import NewsRepository from '../repositories/news_repository';
 import * as constants from './constants/constants';
 
 export let creatingUserName = text => {
@@ -28,24 +29,51 @@ export let collectionUsers = users => {
   };
 };
 
-export let collectionNews = news => {
-  return {
-    type: constants.COLLECTION_NEWS,
-    payload: news,
-  };
+export let getCollectionNews = () => dispatch => {
+  function onSuccess(success) {
+    dispatch({type: constants.NEWS_FETCHED, payload: success});
+    return success;
+  }
+  try {
+    const newsRepository = new NewsRepository();
+    newsRepository.getWarNews().then(data => {
+      console.log(data.articles);
+      return onSuccess(data.articles);
+    });
+  } catch (error) {
+    return console.log(error);
+  }
 };
 
-export let searchPanelNewsTerm = term => {
-  console.log(term);
+export let searchChangedNews = term => {
   return {
     type: constants.NEWS_SEARCH_TERM,
     payload: term,
   };
 };
 
-export let searchBarNewsClicked = clicked => {
+export let isSearchBarClickedNews = bool => {
   return {
     type: constants.NEWS_SEARCH_TERM,
-    payload: clicked,
+    payload: bool,
   };
+};
+
+export let getSpecifiedNews = text => async dispatch => {
+  function onSuccess(success) {
+    dispatch({type: constants.NEWS_FETCHED, payload: success});
+    return success;
+  }
+  function onError(error) {
+    dispatch({type: constants.NEWS_FAILED, error});
+  }
+  try {
+    const newsRepository = new NewsRepository();
+    newsRepository.getSpecifiedNews(text).then(data => {
+      console.log(data.articles);
+      return onSuccess(data.articles);
+    });
+  } catch (error) {
+    return onError(error);
+  }
 };

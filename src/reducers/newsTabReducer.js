@@ -1,9 +1,9 @@
 import * as constants from '../actions/constants/constants';
 
 const INITIAL_STATE = {
-  news: [],
+  news: null,
   term: '',
-  clicked: false,
+  clicked: true,
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -14,14 +14,22 @@ export default (state = INITIAL_STATE, action) => {
         news: action.payload,
       };
     case constants.NEWS_SEARCH_TERM: {
-      const {term} = action.payload;
-      return {...state, term};
+      return {
+        ...state,
+        term: action.payload,
+      };
     }
     case constants.NEWS_SEARCH_CLICKED:
       return {
         ...state,
         clicked: action.payload,
       };
+    case constants.NEWS_FETCHED:
+      return {...state, news: action.payload};
+    case constants.NEWS_FAILED:
+      return {...state};
+    case constants.COLLECTION_NEWS:
+      return {...state, news: action.payload};
     default:
       return state;
   }

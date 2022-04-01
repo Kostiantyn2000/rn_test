@@ -10,30 +10,14 @@ import SvgClose from '../../../../../../assets/svg/close';
 import SvgSearch from '../../../../../../assets/svg/search';
 
 class Search extends React.Component {
-  state = {
-    term: '',
-    clicked: false,
-  };
-
-  onChangeSearch = text => {
-    const term = text;
-    this.setState({term: text});
-    this.props.searchPanel(term);
-  };
-
-  isClicked = bool => {
-    const clicked = bool;
-    this.setState({clicked});
-    this.props.isClickedUpdate(clicked);
-  };
   render() {
+    console.log(this.props.clicked);
+    const {onSearchChangeText, term, clicked, isClickedSearch} = this.props;
     return (
       <View style={styles.container}>
         <View
           style={
-            this.state.clicked
-              ? styles.searchBar__clicked
-              : styles.searchBar__unclicked
+            clicked ? styles.searchBar__clicked : styles.searchBar__unclicked
           }>
           {/* search Icon */}
           <SvgSearch />
@@ -41,20 +25,20 @@ class Search extends React.Component {
           <TextInput
             style={styles.input}
             placeholder="Search"
-            value={this.state.term}
-            onChangeText={this.onChangeSearch}
+            value={term}
+            onChangeText={onSearchChangeText}
             onFocus={() => {
-              this.isClicked(true);
+              isClickedSearch(true);
             }}
           />
           {/* cross Icon, depending on whether the search bar is clicked or not */}
-          {this.state.clicked && (
+          {clicked && (
             <TouchableOpacity
               onPress={() => {
                 Keyboard.dismiss();
-                this.isClicked(false);
+                isClickedSearch(false);
               }}>
-              <SvgClose isClicked={this.isClicked} />
+              <SvgClose />
             </TouchableOpacity>
           )}
         </View>

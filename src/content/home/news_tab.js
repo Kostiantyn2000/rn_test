@@ -2,31 +2,32 @@ import React from 'react';
 import {Text, View, FlatList, StyleSheet} from 'react-native';
 import NewsRepository from '../../repositories/news_repository';
 import Search from '../../components/search/search/search-item/search-item/search';
-export default class NewsTab extends React.Component {
-  state = {
-    news: [],
-    term: '',
-    clicked: false,
-  };
-
-  searchPanel = term => {
-    this.setState({term});
-  };
-
-  isClickedUpdate = bool => {
-    this.setState({clicked: bool});
-  };
-
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {
+  searchChangedNews,
+  isSearchBarClickedNews,
+  getSpecifiedNews,
+  getCollectionNews,
+} from '../../actions/actions';
+class NewsTab extends React.Component {
   _newsRepositories = new NewsRepository();
+
+  onSearchChangeText = term => {
+    this.props.searchChangedNews(term);
+    this.props.getSpecifiedNews(term);
+  };
+
+  isClickedSearch = bool => {
+    this.props.isSearchBarClickedNews(bool);
+  };
+
   componentDidMount() {
-    this._newsRepositories.getWarNews().then(data => {
-      this.setState({
-        news: data.articles,
-      });
-    });
+    this.props.getCollectionNews();
   }
 
   render() {
+    console.log(this.props.clicked);
     const Item = ({author, title}) => (
       <View style={styles.item}>
         <Text style={styles.author}>{author}</Text>
@@ -35,32 +36,19 @@ export default class NewsTab extends React.Component {
     );
 
     const renderItem = ({item}) => {
-      if (this.state.term === '') {
-        return <Item author={item.author} title={item.title} />;
-      }
-      if (
-        item.author
-          .toUpperCase()
-          .includes(this.state.term.toUpperCase().trim().replace(/\s/g, ''))
-      ) {
-        return <Item author={item.author} title={item.title} />;
-      }
-      if (
-        item.title
-          .toUpperCase()
-          .includes(this.state.term.toUpperCase().trim().replace(/\s/g, ''))
-      ) {
-        return <Item author={item.author} title={item.title} />;
-      }
+      return <Item author={item.author} title={item.title} />;
     };
 
     return (
       <View>
         <Search
-          searchPanel={this.searchPanel}
-          isClickedUpdate={this.isClickedUpdate}
+          onSearchChangeText={this.onSearchChangeText}
+          term={this.props.term}
+          clicked={this.props.clicked}
+          isClickedSearch={this.isClickedSearch}
         />
-        <FlatList data={this.state.news} renderItem={renderItem} />
+
+        <FlatList data={this.props.news} renderItem={renderItem} />
       </View>
     );
   }
@@ -86,3 +74,25 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
 });
+
+const mapStateToProps = state => {
+  return {
+    term: state.newsReducer.term,
+    clicked: state.newsReducer.clicked,
+    news: state.newsReducer.news,
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return bindActionCreators(
+    {
+      searchChangedNews,
+      isSearchBarClickedNews,
+      getSpecifiedNews,
+      getCollectionNews,
+    },
+    dispatch,
+  );
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NewsTab);
