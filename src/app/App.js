@@ -8,9 +8,20 @@
 
 import React from 'react';
 import Router from '../../navigation/router';
+import {Provider} from 'react-redux';
+import {createStore, applyMiddleware} from 'redux';
+import ReduxThunk from 'redux-thunk';
+import reducers from '../reducers/';
+
+const store = createStore(reducers, applyMiddleware(ReduxThunk));
+console.log(store);
 
 const App = () => {
-  return <Router />;
+  return (
+    <Provider store={store}>
+      <Router />
+    </Provider>
+  );
 };
 
 export default App;

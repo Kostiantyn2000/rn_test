@@ -1,78 +1,59 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import React from 'react';
-import {SafeAreaView, View, StyleSheet, Text, Button} from 'react-native';
+import {SafeAreaView, View, StyleSheet, Button} from 'react-native';
 import {TextInput} from 'react-native-paper';
 import RNPickerSelect from 'react-native-picker-select';
 import {doc, setDoc} from 'firebase/firestore/lite';
 import {db} from '../../repositories/firebase_repository';
 import uuid from 'react-uuid';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import {
+  creatingUserName,
+  creatingUserAge,
+  creatingUserMaritalStatus,
+} from '../../actions/actions';
 
-export default class NewSubscriberTab extends React.Component {
-  state = {
-    usersData: {
-      usersName: '',
-      age: 0,
-      mariatlStatus: false,
-    },
+class NewSubscriberTab extends React.Component {
+  userNameCreating = value => {
+    this.props.creatingUserName(value);
   };
 
-  usersChange = value => {
-    console.log(value);
-    this.setState(({usersData}) => {
-      const newObj = {...usersData, usersName: value};
-      console.log(newObj);
-      return {
-        usersData: newObj,
-      };
-    });
+  userAgeCreating = text => {
+    this.props.creatingUserAge(text);
   };
 
-  ageChange = text => {
-    const value = parseInt(text);
-    this.setState(({usersData}) => {
-      const newObj = {...usersData, age: value};
-      return {
-        usersData: newObj,
-      };
-    });
+  UserMaritalStatusUserCreating = text => {
+    const boolean = text ? true : false;
+    this.props.creatingUserMaritalStatus(boolean);
   };
 
-  mariatalStatusChange = value => {
-    const newValue = value ? true : false;
-    this.setState(({usersData}) => {
-      const newObj = {...usersData, mariatalStatus: newValue};
-      console.log(newObj);
-      return {
-        usersData: newObj,
-      };
-    });
-  };
-  onPressPushInfoUsers = async () => {
-    const users = this.state.usersData;
+  onPushInfoUsers = async () => {
+    const {userName, maritalStatus, age} = this.props.userInfo;
     const id = uuid();
     await setDoc(doc(db, 'users', id), {
-      age: users.usersName,
-      mariatalStatus: users.mariatlStatus,
-      usersName: users.usersName,
+      age: age,
+      maritalStatus: maritalStatus,
+      userName: userName,
+      id: id,
     });
   };
+
   render() {
-    console.log(this.state.usersData.usersName);
     return (
       <SafeAreaView>
         <TextInput
           style={styles.input}
-          onChangeText={text => this.usersChange(text)}
-          defaultValue={this.state.usersName}
+          onChangeText={text => this.userNameCreating(text)}
+          defaultValue={this.props.userName}
         />
         <TextInput
           style={styles.input}
-          onChangeText={text => this.ageChange(text)}
-          value={this.state.age}
+          onChangeText={text => this.userAgeCreating(text)}
+          value={this.props.age}
         />
         <View>
           <RNPickerSelect
-            onValueChange={value => this.mariatalStatusChange(value)}
+            onValueChange={value => this.UserMaritalStatusUserCreating(value)}
             items={[
               {label: 'Married', value: 'married'},
               {label: 'Unmarried', value: 'unmarried'},
@@ -81,15 +62,8 @@ export default class NewSubscriberTab extends React.Component {
           />
         </View>
 
-        <Text style={{padding: 10, fontSize: 42}}>
-          {this.state.usersData.usersName.length || '🍕'}
-        </Text>
         <View>
-          <Button
-            onPress={this.onPressPushInfoUsers}
-            title="Push"
-            color="black"
-          />
+          <Button onPress={this.onPushInfoUsers} title="Push" color="black" />
         </View>
       </SafeAreaView>
     );
@@ -104,3 +78,26 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
+
+const mapStateToProps = state => {
+  console.log(state);
+  return {
+    userName: state.userReducer.userName,
+    age: state.userReducer.age,
+    maritalStatus: state.userReducer.maritalStatus,
+    userInfo: state.userReducer,
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return bindActionCreators(
+    {
+      creatingUserName,
+      creatingUserAge,
+      creatingUserMaritalStatus,
+    },
+    dispatch,
+  );
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NewSubscriberTab);
