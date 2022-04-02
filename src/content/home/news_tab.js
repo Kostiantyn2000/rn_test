@@ -11,8 +11,6 @@ import {
   getCollectionNews,
 } from '../../actions/actions';
 class NewsTab extends React.Component {
-  _newsRepositories = new NewsRepository();
-
   onSearchChangeText = term => {
     this.props.searchChangedNews(term);
     this.props.getSpecifiedNews(term);
@@ -27,7 +25,6 @@ class NewsTab extends React.Component {
   }
 
   render() {
-    console.log(this.props.clicked);
     const Item = ({author, title}) => (
       <View style={styles.item}>
         <Text style={styles.author}>{author}</Text>

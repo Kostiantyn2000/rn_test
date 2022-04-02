@@ -9,58 +9,39 @@ import {
 import SvgClose from '../../../../../../assets/svg/close';
 import SvgSearch from '../../../../../../assets/svg/search';
 
-class Search extends React.Component {
-  render() {
-    console.log(this.props.clicked);
-    const {onSearchChangeText, term, clicked, isClickedSearch} = this.props;
-    return (
-      <View style={styles.container}>
-        <View
-          style={
-            clicked ? styles.searchBar__clicked : styles.searchBar__unclicked
-          }>
-          {/* search Icon */}
-          <SvgSearch />
-          {/* Input field */}
-          <TextInput
-            style={styles.input}
-            placeholder="Search"
-            value={term}
-            onChangeText={onSearchChangeText}
-            onFocus={() => {
-              isClickedSearch(true);
-            }}
-          />
-          {/* cross Icon, depending on whether the search bar is clicked or not */}
-          {clicked && (
-            <TouchableOpacity
-              onPress={() => {
-                Keyboard.dismiss();
-                isClickedSearch(false);
-              }}>
-              <SvgClose />
-            </TouchableOpacity>
-          )}
-        </View>
-        {/* cancel button, depending on whether the search bar is clicked or not */}
-        {/* {this.state.clicked && (
-          <View>
-            <Button
-              title={<SvgClose />}
-              onPress={() => {
-                Keyboard.dismiss();
-                this.isClicked(false);
-              }}>
-              <SvgClose />
-            </Button>
-          </View> */}
-        {/* )} */}
-      </View>
-    );
-  }
-}
+const Search = props => {
+  const {onSearchChangeText, term, clicked, isClickedSearch} = props;
+  return (
+    <View style={styles.container}>
+      <View
+        style={
+          clicked ? styles.searchBar__clicked : styles.searchBar__unclicked
+        }>
+        <SvgSearch />
 
-// styles
+        <TextInput
+          style={styles.input}
+          placeholder="Search"
+          value={term}
+          onChangeText={onSearchChangeText}
+          onFocus={() => {
+            isClickedSearch(true);
+          }}
+        />
+        {clicked && (
+          <TouchableOpacity
+            onPress={() => {
+              Keyboard.dismiss();
+              isClickedSearch(false);
+            }}>
+            <SvgClose />
+          </TouchableOpacity>
+        )}
+      </View>
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     margin: 15,

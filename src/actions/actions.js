@@ -31,18 +31,18 @@ export let collectionUsers = users => {
 
 export let getCollectionNews = () => dispatch => {
   function onSuccess(success) {
-    dispatch({type: constants.NEWS_FETCHED, payload: success});
+    dispatch({type: constants.COLLECTION_NEWS, payload: success});
     return success;
   }
-  try {
-    const newsRepository = new NewsRepository();
-    newsRepository.getWarNews().then(data => {
-      console.log(data.articles);
+  const newsRepository = new NewsRepository();
+  newsRepository
+    .getWarNews()
+    .then(data => {
       return onSuccess(data.articles);
+    })
+    .catch(error => {
+      return console.log(error.massage);
     });
-  } catch (error) {
-    return console.log(error);
-  }
 };
 
 export let searchChangedNews = term => {
@@ -67,13 +67,28 @@ export let getSpecifiedNews = text => async dispatch => {
   function onError(error) {
     dispatch({type: constants.NEWS_FAILED, error});
   }
-  try {
-    const newsRepository = new NewsRepository();
-    newsRepository.getSpecifiedNews(text).then(data => {
-      console.log(data.articles);
+
+  const newsRepository = new NewsRepository();
+  newsRepository
+    .getSpecifiedNews(text)
+    .then(data => {
       return onSuccess(data.articles);
+    })
+    .catch(error => {
+      return onError(error.massage);
     });
-  } catch (error) {
-    return onError(error);
-  }
+};
+
+export const updateSubscribersAge = text => {
+  return {
+    type: constants.UPDATE_SUBSCRIBERS_AGE,
+    payload: parseInt(text, 10),
+  };
+};
+
+export const updateSubscribersName = text => {
+  return {
+    type: constants.UPDATE_SUBSCRIBERS_NAME,
+    payload: text,
+  };
 };

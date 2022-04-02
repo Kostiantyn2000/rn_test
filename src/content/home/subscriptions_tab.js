@@ -1,17 +1,11 @@
 import React from 'react';
-import {
-  Text,
-  View,
-  ScrollView,
-  FlatList,
-  StyleSheet,
-  Switch,
-} from 'react-native';
+import {Text, View, Button, FlatList, StyleSheet, Switch} from 'react-native';
 import {db} from '../../repositories/firebase_repository';
 import {collection, getDocs} from 'firebase/firestore/lite';
 import {collectionUsers} from '../../actions/actions';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+
 class SubscriptionTab extends React.Component {
   usersData = async () => {
     const users = collection(db, 'users');
@@ -20,11 +14,17 @@ class SubscriptionTab extends React.Component {
     this.props.collectionUsers(userList);
   };
 
+  updateUsers = id => {
+    this.props.navigation.navigate('UpdateSubscribers', {
+      id: id,
+    });
+  };
+
   componentDidMount() {
     this.usersData();
   }
   renderNewsItem(item) {
-    const {userName, age, maritalStatus} = item.item;
+    const {userName, age, maritalStatus, id} = item.item;
 
     return (
       <View style={styles.usersCard}>
@@ -40,26 +40,32 @@ class SubscriptionTab extends React.Component {
             value={maritalStatus}
           />
         </View>
+        <View>
+          <Button
+            title="Update Subscribers"
+            color="#000"
+            onPress={() =>
+              this.props.navigation.navigate('UpdateSubscribers', {id: id})
+            }
+          />
+        </View>
       </View>
     );
   }
 
   render() {
     return (
-      <ScrollView style={styles.listContainer}>
+      <View style={styles.listContainer}>
         <FlatList
           data={this.props.users}
           renderItem={item => this.renderNewsItem(item)}
         />
-      </ScrollView>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  listContainer: {
-    marginHorizontal: 20,
-  },
   usersCard: {
     display: 'flex',
     alignItems: 'center',

@@ -22,15 +22,14 @@ class NewSubscriberTab extends React.Component {
     this.props.creatingUserAge(text);
   };
 
-  UserMaritalStatusUserCreating = text => {
-    const boolean = text ? true : false;
+  UserMaritalStatusUserCreating = boolean => {
     this.props.creatingUserMaritalStatus(boolean);
   };
 
   onPushInfoUsers = async () => {
     const {userName, maritalStatus, age} = this.props.userInfo;
     const id = uuid();
-    await setDoc(doc(db, 'users', id), {
+    await setDoc(doc(db, 'users', `${id}`), {
       age: age,
       maritalStatus: maritalStatus,
       userName: userName,
@@ -43,21 +42,21 @@ class NewSubscriberTab extends React.Component {
       <SafeAreaView>
         <TextInput
           style={styles.input}
-          onChangeText={text => this.userNameCreating(text)}
-          defaultValue={this.props.userName}
+          onChangeText={this.userNameCreating}
+          value={this.props.userName}
         />
         <TextInput
           style={styles.input}
-          onChangeText={text => this.userAgeCreating(text)}
+          onChangeText={this.userAgeCreating}
           value={this.props.age}
         />
         <View>
           <RNPickerSelect
-            onValueChange={value => this.UserMaritalStatusUserCreating(value)}
+            onValueChange={this.UserMaritalStatusUserCreating}
             items={[
-              {label: 'Married', value: 'married'},
-              {label: 'Unmarried', value: 'unmarried'},
-              {label: 'InSearch', value: 'inSearch'},
+              {label: 'Married', value: true},
+              {label: 'Unmarried', value: true},
+              {label: 'InSearch', value: true},
             ]}
           />
         </View>

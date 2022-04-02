@@ -4,7 +4,7 @@ import {SvgComponentUsers} from '../../../assets/svg/users-svgrepo-com';
 import * as React from 'react';
 import NewsTab from './news_tab';
 import SubscriptionTab from './subscriptions_tab';
-import NewSubscriberTab from './newSubscribers_tab';
+import NewSubscriberTab from './new_subscribers_tab';
 
 const Tab = createBottomTabNavigator();
 

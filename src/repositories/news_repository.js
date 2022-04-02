@@ -11,14 +11,25 @@ class NewsRepository {
   };
 
   async getWarNews() {
-    const queries = QueryCombiner.composeQueries(
-      Object.entries({
-        ...this._config.defaultQueries,
-        ...{q: 'Ukraine', apiKey: this._config.apiKey},
-      }),
-    );
-    const result = await fetch(`${this._config.apiBase}/everything${queries}`);
-    return await result.json();
+    try {
+      const queries = QueryCombiner.composeQueries(
+        Object.entries({
+          ...this._config.defaultQueries,
+          ...{q: 'Ukraine', apiKey: this._config.apiKey},
+        }),
+      );
+
+      const result = await fetch(
+        `${this._config.apiBase}/everything${queries}`,
+      );
+      if (result.status === 200) {
+        return await result.json();
+      } else {
+        throw new Error('Problem http');
+      }
+    } catch (error) {
+      return error;
+    }
   }
 
   async getSpecifiedNews(value) {
@@ -29,7 +40,7 @@ class NewsRepository {
       }),
     );
     const result = await fetch(`${this._config.apiBase}/everything${queries}`);
-    return await result.json();
+    return result.json();
   }
 }
 

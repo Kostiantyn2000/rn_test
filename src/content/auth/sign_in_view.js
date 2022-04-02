@@ -3,7 +3,7 @@ import {StyleSheet, Text, TextInput, View, Button} from 'react-native';
 import {signInWithEmailAndPassword} from 'firebase/auth';
 import {auth} from '../../repositories/firebase_repository';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import HomeTabs from '../home/home_tabs';
+
 export default class SingIn extends React.Component {
   state = {email: '', password: '', errorMessage: null};
   handleLogin = () => {
@@ -16,14 +16,13 @@ export default class SingIn extends React.Component {
   getData = async value => {
     const jsonValue = value._tokenResponse.email;
     try {
-      await AsyncStorage.getItem('UserName').then(value => {
-        if (value != null || jsonValue) {
+      await AsyncStorage.getItem('UserName').then(val => {
+        if (val != null || jsonValue) {
           this.props.navigation.navigate('HomeTab');
         }
       });
-    } catch (e) {
-      console.log(e);
-      // error reading value
+    } catch (error) {
+      console.log(error);
     }
   };
 
