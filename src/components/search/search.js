@@ -6,8 +6,8 @@ import {
   Keyboard,
   TouchableOpacity,
 } from 'react-native';
-import SvgClose from '../../../../../../assets/svg/close';
-import SvgSearch from '../../../../../../assets/svg/search';
+import SvgClose from '../../../assets/svg/close';
+import SvgSearch from '../../../assets/svg/search';
 
 const Search = props => {
   const {onSearchChangeText, term, clicked, isClickedSearch} = props;

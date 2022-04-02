@@ -1,7 +1,6 @@
 import React from 'react';
 import {Text, View, FlatList, StyleSheet} from 'react-native';
-import NewsRepository from '../../repositories/news_repository';
-import Search from '../../components/search/search/search-item/search-item/search';
+import Search from '../../components/search/search';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {
